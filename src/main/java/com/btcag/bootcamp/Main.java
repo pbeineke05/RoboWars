@@ -12,42 +12,45 @@ public class Main {
     static Gson gson = new Gson();
     static HashMap<String, String> data = new HashMap<>();
     static File saveFile = new File("./src/save.txt");
-    static String userName, robotName;
-    static char robot;
+    static String userName, playerRobotName;
+    static char playerRobot;
     static Scanner cmdScanner = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Board mainBoard = new Board(15, 10);
         gameStart();
+        annoyUser(6000);
         mainBoard.printBoard();
-        selectRobot();
-        mainBoard.spawnRobot(new RoboChampion(robot, robotName), 14, 8);
+        mainBoard.spawnRobot(selectRobot(), 14, 8);
         mainBoard.printBoard();
+        new GameLoop(mainBoard);
     }
 
-    private static void selectRobot(){
+    private static RoboChampion selectRobot() {
         System.out.println();
         System.out.println("Wähle deinen RoboChampion!");
-        if(data.containsKey("preset1") && data.containsKey("preset2") && data.containsKey("preset3")) {
+        if (data.containsKey("preset1") && data.containsKey("preset2") && data.containsKey("preset3")) {
             System.out.println("[1] " + data.get("preset1"));
             System.out.println("[2] " + data.get("preset2"));
             System.out.println("[3] " + data.get("preset3"));
             System.out.println("Oder wähle einen Custom Robot:");
 
-            robot = cmdScanner.nextLine().charAt(0);
+            playerRobot = cmdScanner.nextLine().charAt(0);
 
-            if(robot == '1') robot = data.get("preset1").charAt(0);
-            if(robot == '2') robot = data.get("preset2").charAt(0);
-            if(robot == '3') robot = data.get("preset3").charAt(0);
+            if (playerRobot == '1') playerRobot = data.get("preset1").charAt(0);
+            if (playerRobot == '2') playerRobot = data.get("preset2").charAt(0);
+            if (playerRobot == '3') playerRobot = data.get("preset3").charAt(0);
         }
 
         System.out.println("Wie soll dein RoboChampion heißen?");
-        robotName = cmdScanner.nextLine();
+        playerRobotName = cmdScanner.nextLine();
+
+        return new RoboChampion(playerRobot, playerRobotName, 0);
     }
 
     private static void gameStart() throws IOException {
         readFile();
-        if(data.containsKey("user")){
+        if (data.containsKey("user")) {
             userName = data.get("user");
         } else {
             System.out.println("Bitte gib deinen Nutzernamen ein. Dieser kann nicht mehr angepasst werden!");
@@ -61,14 +64,14 @@ public class Main {
         System.out.println("║         Herzlich Willkommen         ║");
 
         System.out.print("║");
-        for (int i = 0; i < (37 - userName.length()) / 2; i++){
+        for (int i = 0; i < (37 - userName.length()) / 2; i++) {
             System.out.print(" ");
         }
         System.out.print(userName);
-        for (int i = 0; i < (37 - userName.length()) / 2; i++){
+        for (int i = 0; i < (37 - userName.length()) / 2; i++) {
             System.out.print(" ");
         }
-        if(userName.length() % 2 == 0) System.out.print(" ");
+        if (userName.length() % 2 == 0) System.out.print(" ");
         System.out.println("║");
 
         System.out.println("║       Viel Spaß beim Spielen!       ║");
@@ -84,7 +87,7 @@ public class Main {
         System.out.print("Log: ");
 
         int i;
-        while((i=saveReader.read()) != -1){
+        while ((i = saveReader.read()) != -1) {
             System.out.print((char) i);
             savedData.append((char) i);
         }
@@ -102,5 +105,37 @@ public class Main {
         data.put(key, value);
         saveWriter.write(gson.toJson(data));
         saveWriter.close();
+    }
+
+    private static void annoyUser(int milliseconds) throws InterruptedException {
+        int minSteps = 4, maxSteps = 10;
+        long loadingSteps = minSteps + (long) (Math.random() * ((maxSteps - minSteps) + 1));
+        long waitingTime = milliseconds / loadingSteps, slashes = 20 / loadingSteps, percent = 0L;
+
+        for (int i = 0; i < loadingSteps; i++) {
+            System.out.println();
+            System.out.print("Loading: |");
+            for (int j = 0; j < slashes * (i + 1); j++) {
+                System.out.print("/");
+            }
+            for (int j = 0; j < 20 - slashes * (i + 1); j++) {
+                System.out.print(" ");
+            }
+            System.out.print("|");
+            percent = 100 / loadingSteps * (i + 1);
+            System.out.print(percent);
+            System.out.print("%");
+            Thread.sleep(waitingTime);
+        }
+
+        if (percent != 100) {
+            System.out.println();
+            System.out.println("Loading: |///////////////////|100%");
+            Thread.sleep(waitingTime);
+        }
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
     }
 }
