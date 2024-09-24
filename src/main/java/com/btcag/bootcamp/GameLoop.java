@@ -21,7 +21,7 @@ public class GameLoop {
 
             if (currentInput.equals("break")) break;
 
-            currentInput = currentInput.toUpperCase();
+            currentInput = (currentInput.charAt(0) + "").toUpperCase();
 
             switch (currentInput) {
                 case "W":

@@ -20,7 +20,6 @@ public class Main {
         Board mainBoard = new Board(15, 10);
         gameStart();
         annoyUser(6000);
-        mainBoard.printBoard();
         mainBoard.spawnRobot(selectRobot(), 14, 8);
         mainBoard.printBoard();
         new GameLoop(mainBoard);
@@ -41,6 +40,8 @@ public class Main {
             if (playerRobot == '2') playerRobot = data.get("preset2").charAt(0);
             if (playerRobot == '3') playerRobot = data.get("preset3").charAt(0);
         }
+
+        System.out.println("Gute Wahl! Du spielst nun als " + playerRobot + ".");
 
         System.out.println("Wie soll dein RoboChampion heißen?");
         playerRobotName = cmdScanner.nextLine();
@@ -107,7 +108,7 @@ public class Main {
         saveWriter.close();
     }
 
-    private static void annoyUser(int milliseconds) throws InterruptedException {
+    public static void annoyUser(int milliseconds) throws InterruptedException {
         int minSteps = 4, maxSteps = 10;
         long loadingSteps = minSteps + (long) (Math.random() * ((maxSteps - minSteps) + 1));
         long waitingTime = milliseconds / loadingSteps, slashes = 20 / loadingSteps, percent = 0L;

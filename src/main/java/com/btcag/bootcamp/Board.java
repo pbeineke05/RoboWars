@@ -200,18 +200,20 @@ public class Board {
             this.printBoard();
             System.out.println("Kein Gegner getroffen");
             try {
-                Thread.sleep(1000);
+                Main.annoyUser(5000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         } else {
             RoboChampion hitRobot = (RoboChampion) internalBoard[posX + offsetX][posY + offsetY];
             hitRobot.setAliveStatus(false);
-            killAnimation(activeRobots.get(damageDealerID), hitRobot);
+            Animations.killAnimation(activeRobots.get(damageDealerID), hitRobot);
+            System.out.println(activeRobots.get(damageDealerID).getName() + " hat " + hitRobot.getName() + " getroffen. GG!");
+            try {
+                Main.annoyUser(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-    }
-
-    private void killAnimation(RoboChampion winner, RoboChampion killed) {
-
     }
 }
